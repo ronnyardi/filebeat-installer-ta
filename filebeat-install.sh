@@ -22,7 +22,7 @@ cd $VERSION
 # Filebeat Config
 cat <<END >filebeat.yml
 filebeat.inputs:
-- type: log
+- type: filestream
   enabled: true
   paths:
     - filename.log
