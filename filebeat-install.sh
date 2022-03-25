@@ -4,7 +4,8 @@ VERSION="7.17.0"
 
 echo -e "Filebeat akan diunduh dan dijalankan pada path /opt/filebeat/7.17.0/ \n"
 echo -e "Starting..\n"
-mkdir /opt/filebeat && cd /opt/filebeat
+mkdir -p /opt/filebeat/$VERSION/certs
+cp logstash-forwarder.crt /opt/filebeat/$VERSION/certs && cd /opt/filebeat
 
 echo -e "Downloading Filebeat version 7.17.0 ...\n"
 wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$VERSION-linux-x86_64.tar.gz --show-progress
@@ -17,7 +18,6 @@ FILENAME=$(ls -tr *.tar.gz | head -1)
 tar -xf $FILENAME -C $VERSION --strip-components=1
 rm -fr $FILENAME
 cd $VERSION
-mkdir certs && cp ../logstash-forwarder.crt certs
 
 # Filebeat Config
 cat <<END >filebeat.yml
@@ -58,10 +58,10 @@ fi
 echo -e " "
 
 sleep 1
-read -e -p 'Type the TAGS name that you need to add in for the above mentioned logs. [E.x. testTag] => ' TAG1
-/bin/sed -i s/testTAG/$TAG1/g filebeat.yml
+#read -e -p 'Type the TAGS name that you need to add in for the above mentioned logs. [E.x. testTag] => ' TAG1
+#/bin/sed -i s/testTAG/$TAG1/g filebeat.yml
 /bin/sed -i s/VERSION/$VERSION/g filebeat.yml
-echo -e " "
+#echo -e " "
 
 # systemD unit file
 echo -e "Setting up systemD service files.."
@@ -76,7 +76,7 @@ Restart=always
 User=root
 Group=root
 WorkingDirectory=/opt/filebeat/VERSION
-ExecStart=/opt/filebeat/VERSION/filebeat -c /opt/filebeat/VERSION/config/filebeat.yaml
+ExecStart=/opt/filebeat/VERSION/filebeat -c /opt/filebeat/VERSION/filebeat.yml
 
 [Install]
 WantedBy=multi-user.target
@@ -88,7 +88,7 @@ sleep 1
 
 echo -e " "
 echo "Starting up the filebeat.service"
-# systemctl daemon-reload
-sleep 1
+systemctl daemon-reload
+sleep 2
 systemctl start filebeat.service
 systemctl is-active filebeat.service >/dev/null 2>&1 && echo "Congradulations.. Filebeat is now starting & sending logs" || echo "Something is Wrong.! Check the configuration"
