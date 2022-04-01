@@ -90,6 +90,7 @@ echo -e " "
 echo "Starting up the filebeat.service"
 systemctl daemon-reload
 sleep 2
-systemctl enable filebeat.service
-systemctl start filebeat.service
+systemctl enable --now filebeat.service
+sleep 2
+systemctl restart filebeat.service
 systemctl is-active filebeat.service >/dev/null 2>&1 && echo "Congradulations.. Filebeat is now starting & sending logs" || echo "Something is Wrong.! Check the configuration"
