@@ -23,10 +23,9 @@ cd $VERSION
 cat <<END >filebeat.yml
 filebeat.inputs:
 - type: filestream
-  enabled: true
+  enabled: false
   paths:
     - filename.log
-  tags: ["testTag"]
 
 filebeat.config.modules:
   path: /opt/filebeat/VERSION/modules.d/*.yml
@@ -47,6 +46,21 @@ processors:
   - add_kubernetes_metadata: ~
 END
 
+cd modules.d && touch system.yml
+#Syslog config
+cat <<END >system.yml
+- module: system
+  # Syslog
+  syslog:
+    enabled: true
+    var.paths: ["/var/log/syslog*"]
+
+  # Auth logs
+  auth:
+    enabled: true
+    var.paths: ["/var/log/auth.log*"]
+END
+
 sleep 1
 echo -e "Configuring the Agent...?"
 sleep 2
@@ -58,10 +72,7 @@ fi
 echo -e " "
 
 sleep 1
-#read -e -p 'Type the TAGS name that you need to add in for the above mentioned logs. [E.x. testTag] => ' TAG1
-#/bin/sed -i s/testTAG/$TAG1/g filebeat.yml
 /bin/sed -i s/VERSION/$VERSION/g filebeat.yml
-#echo -e " "
 
 # systemD unit file
 echo -e "Setting up systemD service files.."
