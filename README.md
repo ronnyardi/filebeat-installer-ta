@@ -14,7 +14,7 @@
     ```
     File ```filebeat-installer.sh``` digunakan sebagai bash script instalasi Filebeat. Sedangkan file ```logstash-forwarder.crt``` adalah private key yang digunakan untuk melakukan SSL connection ke endpoint Logstash (Pengumpul log-log).
 
-3. Jika ada kendala hubungi tim kami melalui [ditarananta@gmail.com](mailto:ditarananta@gmail.com) atau [ronnyardianto29@gmail.com](mailto:ronnyardianto29@gmail.com)
+3. Jika ada kendala hubungi tim kami
 
 ## Credits
 Tim Tugas Akhir Kelompok 3
